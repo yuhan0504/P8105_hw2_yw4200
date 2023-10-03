@@ -128,7 +128,7 @@ Use a similar process to import, clean, and organize the data for Professor Tras
 ```{r}
 library(readxl)
 # import and clean mr.trash wheel
-mr_data = read_excel("./local_data/202207 Trash Wheel Collection Data.xlsx",sheet ="Mr. Trash Wheel") |>
+mr_data = read_excel("./local_data/202309 Trash Wheel Collection Data.xlsx",sheet ="Mr. Trash Wheel") |>
     janitor::clean_names()
 tail(mr_data, 5)
 
@@ -141,7 +141,7 @@ mr_data$homes_powered <- round(500*mr_data$weight_tons/30,2)
 mr_data$trash_wheel <- "Mr.Trash Wheel"
 
 # import and clean Professor Trash Wheel
-professor_data = read_excel("./local_data/202207 Trash Wheel Collection Data.xlsx",sheet ="Professor Trash Wheel") |>
+professor_data = read_excel("./local_data/202309 Trash Wheel Collection Data.xlsx",sheet ="Professor Trash Wheel") |>
     janitor::clean_names()
 
 professor_data <- professor_data |> 
@@ -152,7 +152,7 @@ professor_data$homes_powered <- round(500*professor_data$weight_tons/30,2)
 professor_data$trash_wheel <- "Professor Trash Wheel"
 
 # import and clean Gwynnda Trash Wheel
-gw_data = read_excel("./local_data/202207 Trash Wheel Collection Data.xlsx",sheet ="Gwynnda Trash Wheel") |>
+gw_data = read_excel("./local_data/202309 Trash Wheel Collection Data.xlsx",sheet ="Gwynnda Trash Wheel") |>
     janitor::clean_names()
 
 gw_data <- gw_data |> 
@@ -170,21 +170,22 @@ summary(merged_wheel)
 
 Write a paragraph about these data; you are encouraged to use inline R. Be sure to note the number of observations in the resulting dataset, and give examples of key variables. For available data, what was the total weight of trash collected by Professor Trash Wheel? What was the total number of cigarette butts collected by Gwynnda in July of 2021?
 ```{r}
-dim(merged_wheel)
+nrow(merged_wheel)
+ncol(merged_wheel)
 head(merged_wheel)
 ```
-Answer: In the resulting dataset, there are total 747 observations of 16 variables. Key variables are shown above by using head() function,such as weight_tons,date,homes_powered. The key variables include the date, the number or weight of different kinds of rubbish, the total weight and so on. For example, we use the weight variable to represent the weight of the trash when calculating how much energy the house would require.
+Answer: In the resulting dataset `merged_wheel`, there are total `r nrow(merged_wheel)` observations of `r ncol(merged_wheel)` variables. Key variables are shown above by using head() function,such as `weight_tons`,`date`,`homes_powered`. The key variables include the date, the number or weight of different kinds of rubbish, the total weight and so on. For example, we use the `weight_tons` variable to represent the weight of the trash when calculating how much energy the house would require.
 
 ```{r}
 sum(professor_data$weight_tons)
 ```
-The total weight of trash collected by Professor Trash Wheel was about 190.12 tons.
+The total weight of trash collected by Professor Trash Wheel was about `r sum(professor_data$weight_tons)` tons.
 
 ```{r}
 gw_cigarette <- filter(gw_data,year == 2021,month == "July")
 sum(gw_cigarette$cigarette_butts)
 ```
-The total number of cigarette butts collected by Gwynnda in July of 2021 was 16300.
+The total number of cigarette butts collected by Gwynnda in July of 2021 was `r sum(gw_cigarette$cigarette_butts)`.
 
 ## Problem 3
 This problem uses data collected in an observational study to understand the trajectory of Alzheimer’s disease (AD) biomarkers. Study participants were free of Mild Cognitive Impairment (MCI), a stage between the expected cognitive decline of normal aging and the more serious decline of dementia, at the study baseline.
