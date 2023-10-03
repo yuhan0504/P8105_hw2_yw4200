@@ -71,7 +71,7 @@ head(snp_data)
 ```
 Third, tidy the unemployment data so that it can be merged with the previous datasets. This process will involve switching from “wide” to “long” format; ensuring that key variables have the same name; and ensuring that key variables take the same values.
 
-```{r cars}
+```{r}
 unemploy_data = read_csv(file = "./local_data/fivethirtyeight_datasets/unemployment.csv")
 
 #switching from “wide” to “long” format
@@ -95,7 +95,7 @@ head(unemploy_data)
 ```
 
 Join the datasets by merging snp into pols, and merging unemployment into the result.
-```{r cars}
+```{r}
 merged_data <- merge(pols_data, snp_data, by = c("year","month"), all.x = TRUE)
 final_data <- merge(merged_data,unemploy_data,by = c("year","month"), all.x = TRUE)
 head(final_data)
