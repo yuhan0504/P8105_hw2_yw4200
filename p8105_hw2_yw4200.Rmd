@@ -236,9 +236,6 @@ Check whether some participants appear in only the baseline or amyloid datasets,
 ```{r}
 amyloid_data <- rename(amyloid_data,id = study_id)
 
-# Export the dataset as a CSV file
-write.csv(merged_dataset3, "./local_data/mci_combined_result.csv", row.names = FALSE)
-
 # find the difference between two datasets
 only_in_baseline = setdiff(baseline_data$id, amyloid_data$id)
 only_in_amyloid = setdiff(amyloid_data$id, baseline_data$id)
@@ -248,6 +245,9 @@ only_in_amyloid
 merged_dataset3 <- merge(amyloid_data,baseline_data, by = "id", all = FALSE)
 summary(merged_dataset3)
 dim(merged_dataset3)
+
+# Export the dataset as a CSV file
+write.csv(merged_dataset3, "./local_data/mci_combined_result.csv", row.names = FALSE)
 ```
 Some participants appear in only the baseline dataset.Participants whose id are  14  49  92 179 268 304 389 412 only appear in baseline dataset;participants whose id are 484 485 486 487 488 489 490 491 492 493 494 495 only appear in amyloid dataset;
 The resulting dataset includes 475 observations and 11 variables. The key variables include id,baseline,time_2,time_4,time_6,time_8,current_age,sex,education,apoe4,age_at_onset. The statistics summary is shown above.
