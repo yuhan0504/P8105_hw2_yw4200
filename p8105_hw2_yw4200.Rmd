@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Problem 1
 
-This problem uses the FiveThirtyEight data; these data were gathered to create the interactive graphic on this page. In particular, we’ll use the data in pols-month.csv, unemployment.csv, and snp.csv. Our goal is to merge these into a single data frame using year and month as keys across datasets.
+This problem uses the FiveThirtyEight data; these data were gathered to create the interactive graphic on this page. In particular, we'll use the data in pols-month.csv, unemployment.csv, and snp.csv. Our goal is to merge these into a single data frame using year and month as keys across datasets.
 
 First, clean the data in pols-month.csv. Use separate() to break up the variable mon into integer variables year, month, and day; replace month number with month name; create a president variable taking values gop and dem, and remove prez_dem and prez_gop; and remove the day variable.
 
@@ -40,6 +40,7 @@ pols_data <- pols_data |>
 #pols_data$date <- as.Date(paste("01",match(pols_data$month, month.name),pols_data$year,sep = " "),format = "%d %m %Y")
 head(pols_data)
 ```
+
 Second, clean the data in snp.csv using a similar process to the above. For consistency across datasets, arrange according to year and month, and organize so that year and month are the leading columns.
 
 ```{r}
@@ -69,7 +70,8 @@ snp_data$month <- month.name[snp_data$month]
 #snp_data$date <- as.Date(paste("01",match(snp_data$month, month.name),snp_data$year,sep = " "),format = "%d %m %Y")
 head(snp_data)
 ```
-Third, tidy the unemployment data so that it can be merged with the previous datasets. This process will involve switching from “wide” to “long” format; ensuring that key variables have the same name; and ensuring that key variables take the same values.
+
+Third, tidy the unemployment data so that it can be merged with the previous datasets. This process will involve switching from "wide" to "long" format; ensuring that key variables have the same name; and ensuring that key variables take the same values.
 
 ```{r}
 unemploy_data = read_csv(file = "./local_data/fivethirtyeight_datasets/unemployment.csv")
@@ -95,6 +97,7 @@ head(unemploy_data)
 ```
 
 Join the datasets by merging snp into pols, and merging unemployment into the result.
+
 ```{r}
 merged_data <- merge(pols_data, snp_data, by = c("year","month"), all.x = TRUE)
 final_data <- merge(merged_data,unemploy_data,by = c("year","month"), all.x = TRUE)
@@ -107,15 +110,16 @@ Write a short paragraph about these datasets. Explain briefly what each dataset 
 
 Note: we could have used a date variable as a key instead of creating year and month keys; doing so would help with some kinds of plotting, and be a more accurate representation of the data. Date formats are tricky, though. For more information check out the lubridate package in the tidyverse.
 
-Answer:This analysis used three datasets: "snp," "pols-month," and "unemployment." There are 822 observations of 9 variables in the file "pols-month" that are related to whether there are currently more republican or democratic national politicians.  The range of the year is from 1947 to 2015. The key variables are mon,prez_gop,gov_gop,sen_gop,rep_gop,prez_dem,gov_dem,sen_dem,rep_dem.
+Answer:This analysis used three datasets: "snp," "pols-month," and "unemployment." There are 822 observations of 9 variables in the file "pols-month" that are related to whether there are currently more republican or democratic national politicians. The range of the year is from 1947 to 2015. The key variables are mon,prez_gop,gov_gop,sen_gop,rep_gop,prez_dem,gov_dem,sen_dem,rep_dem.
 
-There are 787 observations of 2 variables in the file "snp".The range of the year is from 1950 to 2015. The Standard & Poor's stock market index, which is frequently used as a representative indicator of the entire stock market, is one of the two variables. Names of key variables are close, date. 
+There are 787 observations of 2 variables in the file "snp".The range of the year is from 1950 to 2015. The Standard & Poor's stock market index, which is frequently used as a representative indicator of the entire stock market, is one of the two variables. Names of key variables are close, date.
 
 In the "unemployment" file, there are 68 observations of 13 variables that relate to the percentage of unemployment over time.The range of the year(date) is from 1948 Jan to 2015 Jun. Names of key variables are Year, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec.
 
-The resulting dataset has 822 observations of 11 variables. The range of years is from 1947 to 2015. Names of key variables are  year,month,gov_gop,sen_gop,rep_gop,gov_dem,president,close,percentage of unemployment. Year and month represent the time. Close is the closing values of the S&P stock index on the associated date.
+The resulting dataset has 822 observations of 11 variables. The range of years is from 1947 to 2015. Names of key variables are year,month,gov_gop,sen_gop,rep_gop,gov_dem,president,close,percentage of unemployment. Year and month represent the time. Close is the closing values of the S&P stock index on the associated date.
 
 ## Problem 2
+
 This problem uses the Mr. Trash Wheel dataset, available as an Excel file on the course website.
 
 Read and clean the Mr. Trash Wheel sheet:
@@ -125,6 +129,7 @@ specify the sheet in the Excel file and to omit non-data entries (rows with note
 The data include a column for the (approximate) number of homes powered. This calculation is described in the Homes powered note, but not applied to every row in the dataset. Update the data to include a new homes_powered variable based on this calculation.
 
 Use a similar process to import, clean, and organize the data for Professor Trash Wheel and Gwynnda, and combine these with the Mr. Trash Wheel dataset to produce a single tidy dataset. To keep track of which Trash Wheel is which, you may need to add an additional variable to all datasets before combining.
+
 ```{r}
 library(readxl)
 # import and clean mr.trash wheel
@@ -169,29 +174,35 @@ summary(merged_wheel)
 ```
 
 Write a paragraph about these data; you are encouraged to use inline R. Be sure to note the number of observations in the resulting dataset, and give examples of key variables. For available data, what was the total weight of trash collected by Professor Trash Wheel? What was the total number of cigarette butts collected by Gwynnda in July of 2021?
+
 ```{r}
 nrow(merged_wheel)
 ncol(merged_wheel)
 head(merged_wheel)
 ```
-Answer: In the resulting dataset `merged_wheel`, there are total `r nrow(merged_wheel)` observations of `r ncol(merged_wheel)` variables. Key variables are shown above by using head() function,such as `weight_tons`,`date`,`homes_powered`. The key variables include the date, the number or weight of different kinds of rubbish, the total weight and so on. For example, we use the `weight_tons` variable to represent the weight of the trash when calculating how much energy the house would require.
+
+Answer: There are `r nrow(mr_data)` observations and `r ncol(mr_data)` variables in the `Mr.Trash Wheel`. There are `r nrow(professor_data)` observations and `r ncol(professor_data)` variables in the `Professor Trash Wheel`. There are `r nrow(gw_data)` observations and `r ncol(gw_data)` variables in the `Gwynnda Trash Wheel`.
+
+In the resulting dataset `merged_wheel`, there are total `r nrow(merged_wheel)` observations of `r ncol(merged_wheel)` variables. Key variables are shown above by using head() function,such as `weight_tons`,`date`,`homes_powered`. The key variables include the date, the number or weight of different kinds of rubbish, the total weight and so on. For example, we use the `weight_tons` variable to represent the weight of the trash when calculating how much energy the house would require.
 
 ```{r}
 sum(professor_data$weight_tons)
 ```
+
 The total weight of trash collected by Professor Trash Wheel was about `r sum(professor_data$weight_tons)` tons.
 
 ```{r}
 gw_cigarette <- filter(gw_data,year == 2021,month == "July")
 sum(gw_cigarette$cigarette_butts)
 ```
+
 The total number of cigarette butts collected by Gwynnda in July of 2021 was `r sum(gw_cigarette$cigarette_butts)`.
 
 ## Problem 3
-This problem uses data collected in an observational study to understand the trajectory of Alzheimer’s disease (AD) biomarkers. Study participants were free of Mild Cognitive Impairment (MCI), a stage between the expected cognitive decline of normal aging and the more serious decline of dementia, at the study baseline.
 
-Basic demographic information were measured at the study baseline. The study monitored the development of MCI and recorded the age of MCI onset during the follow-up period, with the last visit marking the end of follow-up. APOE4 is a variant of the apolipoprotein E gene, significantly associated with a higher risk of developing Alzheimer’s disease. The amyloid β
- 42/40 ratio holds significant promise for diagnosing and predicting disease outcomes. This ratio undergoes changes over time and has been linked to the manifestation of clinical symptoms of Alzheimer’s disease.
+This problem uses data collected in an observational study to understand the trajectory of Alzheimer's disease (AD) biomarkers. Study participants were free of Mild Cognitive Impairment (MCI), a stage between the expected cognitive decline of normal aging and the more serious decline of dementia, at the study baseline.
+
+Basic demographic information were measured at the study baseline. The study monitored the development of MCI and recorded the age of MCI onset during the follow-up period, with the last visit marking the end of follow-up. APOE4 is a variant of the apolipoprotein E gene, significantly associated with a higher risk of developing Alzheimer's disease. The amyloid β 42/40 ratio holds significant promise for diagnosing and predicting disease outcomes. This ratio undergoes changes over time and has been linked to the manifestation of clinical symptoms of Alzheimer's disease.
 
 Import, clean, and tidy the dataset of baseline demographics. Ensure that sex and APOE4 carrier status are appropriate encoded (i.e. not numeric), and remove any participants who do not meet the stated inclusion criteria (i.e. no MCI at baseline). Discuss important steps in the import process and relevant features of the dataset. How many participants were recruited, and of these how many develop MCI? What is the average baseline age? What proportion of women in the study are APOE4 carriers?
 
@@ -209,17 +220,23 @@ baseline_data <- baseline_data |>
     apoe4 = replace(apoe4, apoe4 == 0, "Apoe4 non-carrier"),
     ) 
 baseline_data$age_at_onset <- as.numeric(baseline_data$age_at_onset)
-baseline_filterdata <- baseline_data |> filter(age_at_onset != ".")
+
+#remove any participants who do not meet the stated inclusion criteria
+baseline_filterdata <- baseline_data |> 
+  mutate(age_at_onset = ifelse(age_at_onset == '.', NA, age_at_onset)) |>
+  filter(current_age < age_at_onset | is.na(age_at_onset))
+
 summary(baseline_filterdata)
 
 proportion <- nrow(filter(baseline_filterdata,apoe4 == "Apoe4 carrier",sex == "female"))/nrow(filter(baseline_filterdata,sex == "female"))
-proportion
 ```
+
 Answer: First of all when importing data I start with the second line and the first line is the description of the variable. Then for variable name cleaning, apply mutate() and replace function as required for sex, apoe4 re-copy, and finally exclude objects where the age_at_onset is null.(no MCI at baseline)
 
-483 participants were recruited and of these 97 people develop MCI.The average baseline age is 65.61. In the study about 65.21% women in the study are APOE4 carriers.
+`r nrow(baseline_data)` participants were recruited and of these `r nrow(baseline_filterdata)` people develop MCI.The average baseline age is `r mean(baseline_filterdata)`. In the study about `r proportion*100`% women in the study are APOE4 carriers.
 
 Similarly, import, clean, and tidy the dataset of longitudinally observed biomarker values; comment on the steps on the import process and the features of the dataset.
+
 ```{r}
 # Import, clean, and tidy the dataset of longitudinally observed biomarker values
 amyloid_data = read_csv(file = "./local_data/data_mci/mci_amyloid.csv",skip = 1)
@@ -231,24 +248,24 @@ amyloid_data <- amyloid_data |>
 summary(amyloid_data)
 dim(amyloid_data)
 ```
-Answer: First of all when importing data I start with the second line and the first line is the some description. Then I clean the variables' name and I notice that the type of the variable(baseline,time_2, time_4, time_6, time_8) is character. In order to see more details and statistics of those varibles, i change them into numeric. The dataset consists of 487 observations and 6 variables. The average of time (in years) elapsed since the study baseline to the visit where biomarker Amyloid _ 42/40 ratio was measured is 0.111 years. More details are shown above by using summary function. And the dataset contains several NA in different variables.
 
-Check whether some participants appear in only the baseline or amyloid datasets, and comment on your findings. Combine the demographic and biomarker datasets so that only participants who appear in both datasets are retained, and briefly describe the resulting dataset; export the result as a CSV to your data directory.  
+Answer: First of all when importing data I start with the second line and the first line is the some description. Then I clean the variables' name and I notice that the type of the variable(baseline,time_2, time_4, time_6, time_8) is character. In order to see more details and statistics of those varibles, i change them into numeric. The dataset consists of 487 observations and 6 variables. The average of time (in years) elapsed since the study baseline to the visit where biomarker Amyloid \_ 42/40 ratio was measured is 0.111 years. More details are shown above by using summary function. And the dataset contains several NA in different variables.
+
+Check whether some participants appear in only the baseline or amyloid datasets, and comment on your findings. Combine the demographic and biomarker datasets so that only participants who appear in both datasets are retained, and briefly describe the resulting dataset; export the result as a CSV to your data directory.
+
 ```{r}
 amyloid_data <- rename(amyloid_data,id = study_id)
 
 # find the difference between two datasets
-only_in_baseline = setdiff(baseline_data$id, amyloid_data$id)
-only_in_amyloid = setdiff(amyloid_data$id, baseline_data$id)
-only_in_baseline
-only_in_amyloid
+only_in_baseline = setdiff(baseline_filterdata$id, amyloid_data$id)
+only_in_amyloid = setdiff(amyloid_data$id, baseline_filterdata$id)
 
-merged_dataset3 <- merge(amyloid_data,baseline_data, by = "id", all = FALSE)
+merged_dataset3 <- inner_join(amyloid_data,baseline_filterdata, by = "id")
 summary(merged_dataset3)
 dim(merged_dataset3)
 
 # Export the dataset as a CSV file
-write.csv(merged_dataset3, "./local_data/mci_combined_result.csv", row.names = FALSE)
+write.csv(merged_dataset3, "./local_data/mci_combined_result.csv", row.names = TRUE)
 ```
-Some participants appear in only the baseline dataset.Participants whose id are  14  49  92 179 268 304 389 412 only appear in baseline dataset;participants whose id are 484 485 486 487 488 489 490 491 492 493 494 495 only appear in amyloid dataset;
-The resulting dataset includes 475 observations and 11 variables. The key variables include id,baseline,time_2,time_4,time_6,time_8,current_age,sex,education,apoe4,age_at_onset. The statistics summary is shown above.
+
+Some participants appear in only the baseline dataset.Participants whose id are `r only_in_baseline` only appear in baseline dataset;participants whose id are `r only_in_amyloid` only appear in amyloid dataset; The resulting dataset includes `r nrow(merged_dataset3)` observations and `r ncol(merged_dataset3)` variables. The key variables include id,baseline,time_2,time_4,time_6,time_8,current_age,sex,education,apoe4,age_at_onset. The statistics summary is shown above.
