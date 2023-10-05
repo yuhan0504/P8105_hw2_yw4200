@@ -243,20 +243,33 @@ amyloid_data = read_csv(file = "./local_data/data_mci/mci_amyloid.csv",skip = 1)
 amyloid_data <- amyloid_data |>
   janitor::clean_names()
 amyloid_data <- amyloid_data |>
-  mutate_at(vars(baseline,time_2, time_4, time_6, time_8), as.numeric) 
+ rename(id=study_id,
+         year_0 = baseline,
+         year_2 = time_2,
+         year_4 = time_4,
+         year_6 = time_6,
+         year_8 = time_8) |>
+  pivot_longer(
+    year_0:year_8,
+    names_to = "time",
+    values_to = "ratio"
+  ) 
+amyloid_data$ratio <- as.numeric(amyloid_data$ratio)
 
 summary(amyloid_data)
 dim(amyloid_data)
 ```
 
-Answer: First of all when importing data I start with the second line and the first line is the some description. Then I clean the variables' name and I notice that the type of the variable(baseline,time_2, time_4, time_6, time_8) is character. In order to see more details and statistics of those varibles, i change them into numeric. The dataset consists of 487 observations and 6 variables. The average of time (in years) elapsed since the study baseline to the visit where biomarker Amyloid \_ 42/40 ratio was measured is 0.111 years. More details are shown above by using summary function. And the dataset contains several NA in different variables.
+Answer: First of all when importing data I start with the second line and the first line is the some description. Then I clean the variables' name and I use pivot_longer() function to change the dataset to make it more readable. I notice that the type of the variable(baseline,time_2, time_4, time_6, time_8) is character. In order to see more details and statistics of those varibles, i change them into numeric. The dataset consists of `r nrow(amyloid_data)` observations (for an id has 5 rows, it indicates that there are `r nrow(amyloid_data)/5` participants) and `r ncol(amyloid_data)` variables. The average of time (in years) elapsed since the study baseline to the visit where biomarker Amyloid \_ 42/40 ratio was measured is 0.1097 years. More details are shown above by using summary function. And the dataset contains several NA in different variables.
 
 Check whether some participants appear in only the baseline or amyloid datasets, and comment on your findings. Combine the demographic and biomarker datasets so that only participants who appear in both datasets are retained, and briefly describe the resulting dataset; export the result as a CSV to your data directory.
 
 ```{r}
-amyloid_data <- rename(amyloid_data,id = study_id)
-
 # find the difference between two datasets
+only_baseline = anti_join(baseline_filterdata, amyloid_data,by = "id")
+only_amyloid = anti_join(amyloid_data, baseline_filterdata, by = "id")
+
+# find the different id
 only_in_baseline = setdiff(baseline_filterdata$id, amyloid_data$id)
 only_in_amyloid = setdiff(amyloid_data$id, baseline_filterdata$id)
 
@@ -268,4 +281,4 @@ dim(merged_dataset3)
 write.csv(merged_dataset3, "./local_data/mci_combined_result.csv", row.names = TRUE)
 ```
 
-Some participants appear in only the baseline dataset.Participants whose id are `r only_in_baseline` only appear in baseline dataset;participants whose id are `r only_in_amyloid` only appear in amyloid dataset; The resulting dataset includes `r nrow(merged_dataset3)` observations and `r ncol(merged_dataset3)` variables. The key variables include id,baseline,time_2,time_4,time_6,time_8,current_age,sex,education,apoe4,age_at_onset. The statistics summary is shown above.
+Some participants appear in only the baseline dataset.Participants whose id are `r only_in_baseline` only appear in baseline dataset. Total `r nrow(only_baseline)` participants only appear in baseline dataset. Participants whose id are `r only_in_amyloid` only appear in amyloid dataset.  Total `r nrow(only_amyloid)/5` participants only appear in baseline dataset. The resulting dataset includes `r nrow(merged_dataset3)` observations(which means `r nrow(merged_dataset3)/5` different participants) and `r ncol(merged_dataset3)` variables. The key variables include id,baseline,time_2,time_4,time_6,time_8,current_age,sex,education,apoe4,age_at_onset. The statistics summary is shown above.
